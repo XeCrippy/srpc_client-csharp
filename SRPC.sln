@@ -1,0 +1,31 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SRPC", "src\SRPC\SRPC.csproj", "{5AB017D2-7645-4DAA-BDC4-F21F05440FF2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SRPC.Tests", "tests\SRPC.Tests\SRPC.Tests.csproj", "{6FE575A8-6208-44EF-94CC-8EB4A41CC6A0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SRPC.Example", "examples\SRPC.Example\SRPC.Example.csproj", "{0313222B-0EE5-408D-90EF-8E7E6C11154B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5AB017D2-7645-4DAA-BDC4-F21F05440FF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AB017D2-7645-4DAA-BDC4-F21F05440FF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AB017D2-7645-4DAA-BDC4-F21F05440FF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5AB017D2-7645-4DAA-BDC4-F21F05440FF2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6FE575A8-6208-44EF-94CC-8EB4A41CC6A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FE575A8-6208-44EF-94CC-8EB4A41CC6A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FE575A8-6208-44EF-94CC-8EB4A41CC6A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FE575A8-6208-44EF-94CC-8EB4A41CC6A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0313222B-0EE5-408D-90EF-8E7E6C11154B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0313222B-0EE5-408D-90EF-8E7E6C11154B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0313222B-0EE5-408D-90EF-8E7E6C11154B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0313222B-0EE5-408D-90EF-8E7E6C11154B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
