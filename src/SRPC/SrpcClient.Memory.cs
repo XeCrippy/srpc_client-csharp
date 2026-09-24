@@ -256,6 +256,18 @@ public sealed partial class SrpcClient
             throw new ProtocolException($"{type.Name} is not a supported scalar memory type.");
     }
 
+    public uint ResolvePointer(uint address, params int[] offsets)
+    {
+        if (offsets is null) throw new ArgumentNullException(nameof(offsets));
+        var cursor = address;
+        foreach (var offset in offsets) cursor = unchecked(Read<uint>(cursor) + (uint)offset);
+        return cursor;
+    }
+    public T ReadPointer<T>(uint address, int[] offsets, Endian endian = Endian.Big) where T : unmanaged =>
+        Read<T>(ResolvePointer(address, offsets), endian);
+    public void WritePointer<T>(uint address, T value, int[] offsets, Endian endian = Endian.Big) where T : unmanaged =>
+        Write(ResolvePointer(address, offsets), value, endian);
+
     public void WriteBranch(uint address, uint destination, bool linked = false)
     {
         RequireAligned(address, "Branch address"); RequireAligned(destination, "Branch destination");

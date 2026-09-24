@@ -142,6 +142,13 @@ int[] ints = xbox.ReadArray<int>(0x82000000, count: 64);
 string ansi = xbox.ReadCString(0x82000000);
 string wide = xbox.ReadUtf16String(0x82000000);
 
+// Pointer chains. Each offset dereferences a big-endian 32-bit pointer and then
+// adds the offset, so the last offset only shifts the resolved address:
+//     target = [[0x82000000] + 0x10] - 0x08
+uint  target = xbox.ResolvePointer(0x82000000, 0x10, -0x8);
+float health = xbox.ReadPointer<float>(0x82000000, new[] { 0x10, -0x8 });
+xbox.WritePointer(0x82000000, 100.0f, new[] { 0x10, -0x8 });
+
 // Bulk / unmapped-tolerant reads.
 byte[] big    = xbox.ReadMemoryChunked(0x82000000, 0x400000);
 byte[] sparse = xbox.ReadMemorySparse(0x82000000, 0x400000);   // zero-fills unreadable pages

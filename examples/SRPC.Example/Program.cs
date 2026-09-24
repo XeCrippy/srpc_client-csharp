@@ -26,9 +26,22 @@ try
 
     using var xbox = new SrpcClient(host);
     xbox.Connect();
+    int[] offsets = new int[] { 0, 0, 4, 8, 8, 88, 128, 52, 16 };
     Console.WriteLine($"Console: {xbox.ConsoleName()}");
     Console.WriteLine($"Title ID: 0x{xbox.TitleId():X8}");
-    Console.WriteLine($"Value: 0x{xbox.Read<uint>(0x82000000):X8}");
+    Console.WriteLine($"Value at 0x82000000: 0x{xbox.Read<uint>(0x82000000):X8}");
+
+    // Write a pointer with offsets
+    if (xbox.TitleId() == 0x555308B7) // Watchdogs
+    {
+        xbox.WritePointer<float>(0x84129D78, 50.0f, offsets);
+        Thread.Sleep(250);
+    }
+
+    // Read a pointer with offsets
+    // Watchdogs health latest TU
+    if (xbox.TitleId() == 0x555308B7) // Watchdogs
+        Console.WriteLine($"Health: {xbox.ReadPointer<float>(0x84129D78, offsets)}");
 }
 catch (SrpcException error)
 {

@@ -12,6 +12,7 @@ var tests = new (string Name, Action Run)[]
     ("PNG", PngTests),
     ("screenshot", ScreenshotTests),
     ("client integration", ClientIntegrationTests),
+    ("pointer chains", PointerTests),
 };
 var failed = 0;
 foreach (var test in tests)
@@ -90,6 +91,31 @@ static void ClientIntegrationTests()
     Require(client.ReadMemory(0x82000000, payload.Length).SequenceEqual(payload), "framed memory read"); client.WriteMemory(0x82001000, new byte[] { 0xde, 0xad, 0xbe, 0xef });
     Require(client.DownloadFile("Hdd:\\sample.bin").SequenceEqual(new byte[] { 1, 2, 3 }), "file download"); client.UploadFile("Hdd:\\upload.bin", new byte[] { 4, 5, 6 });
     Require(client.CallUInt32(0x82345678, new RpcArgument[] { 5u }) == 0x89abcdef, "JRPC return"); server.Finish();
+}
+
+static void PointerTests()
+{
+    using var server = new ScriptedServer(stream =>
+    {
+        Send(stream, "201- connected\r\n");
+        void SendWord(uint address, uint value)
+        {
+            Require(ReadLine(stream) == $"getmemex addr=0x{address:X} length=4", $"pointer dereference at 0x{address:X}");
+            Send(stream, "203- binary response follows\r\n"); stream.WriteByte(0x04); stream.WriteByte(0x80);
+            stream.Write(new[] { (byte)(value >> 24), (byte)(value >> 16), (byte)(value >> 8), (byte)value });
+        }
+        SendWord(0x82001000, 0x83000000); SendWord(0x83000010, 0x84000000); SendWord(0x83FFFFF8, 0x0000beef);
+        SendWord(0x82001000, 0x83000000); SendWord(0x83000010, 0x84000000);
+        Require(ReadLine(stream) == "setmem addr=0x83FFFFF8 data=3f800000", "pointer chain write"); Send(stream, "200- OK\r\n");
+        SendWord(0x82002000, 0x820a0000);
+    });
+    var options = new ClientOptions { Port = server.Port, Protocol = Protocol.Jrpc2, ConnectTimeout = TimeSpan.FromSeconds(2), IoTimeout = TimeSpan.FromSeconds(2) };
+    using var client = new SrpcClient("127.0.0.1", options); client.Connect();
+    Require(client.ReadPointer<uint>(0x82001000, new[] { 0x10, -0x8 }) == 0x0000beef, "pointer chain read");
+    client.WritePointer(0x82001000, 1.0f, new[] { 0x10, -0x8 });
+    Require(client.ResolvePointer(0x82002000, 0x24) == 0x820a0024, "single offset resolve");
+    Require(client.ResolvePointer(0x82003000) == 0x82003000, "empty offset list resolves to the address itself");
+    server.Finish();
 }
 
 static void Send(Stream stream, string text) => stream.Write(Encoding.ASCII.GetBytes(text));
